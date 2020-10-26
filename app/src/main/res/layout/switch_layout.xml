@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <androidx.appcompat.widget.AppCompatToggleButton
+        android:id="@+id/displaymodeswitch"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerInParent="true"
+        android:layout_marginRight="@dimen/activity_switch_margin"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Display"
+        android:textOn=""
+        android:textOff=""
+        android:background="@drawable/toggle_button_image"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textSize="30sp" />
+</RelativeLayout>

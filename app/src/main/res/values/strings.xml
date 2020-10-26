@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">YahooFinanceKotlin</string>
+    <string name="dialog_title">Add Stock</string>
+    <string name="dialog_hint">Symbol (e.g. GOOG)</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_add">Add</string>
+    <string name="internet_down_message">Symbol can be added when Online!!</string>
+    <string name="stock_found">Stock Found Added !</string>
+    <string name="stock_not_found">Stock Not Found Please check symbol !</string>
+    <string name="fetch_error">Error while Fetching Stock Please try later</string>
+    <string name="generic_error">Could not fetch data please try again !</string>
+    <string name="enter_symbol_message">Please Enter A symbol</string>
+</resources>
