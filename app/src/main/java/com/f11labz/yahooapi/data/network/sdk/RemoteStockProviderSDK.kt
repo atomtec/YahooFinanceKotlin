@@ -25,7 +25,7 @@ object RemoteStockProviderSDK : RemoteDataContract {
                         val change: Float = quote.change.toFloat()
                         val percentChange: Float = quote.changeInPercent.toFloat()
                         val remoteStock =
-                            NetWorkStock(symbol, price, percentChange, change, stock.name)
+                            NetWorkStock(symbol, price, percentChange, change, stock.name, 0f,0f) //No data for post market data in this sdk
                         networkStocks.add(remoteStock)
                     }
                 }

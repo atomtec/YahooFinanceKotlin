@@ -19,17 +19,21 @@
 
     <style name="PercentChangeTextStyle">
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">#FFF
-        </item>
+        <item name="android:textColor">#FFF</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="BidPriceTextStyle">
         <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="PostPriceStyle">
+        <item name="android:textSize">13sp</item>
     </style>
 
     <style name="CompanyNameTextStyle">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">15sp</item>
     </style>
 
     <style name="StockSymbolTextStyle">

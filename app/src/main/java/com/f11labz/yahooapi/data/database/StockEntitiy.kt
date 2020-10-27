@@ -11,7 +11,9 @@ data class StockEntity (
     val price: Float,
     val percentchange: Float,
     val absolutechange: Float,
-    val stockname: String
+    val stockname: String,
+    val postmarketprice : Float,
+    val postmarketchange : Float
 ) { }
 
 /**
@@ -25,7 +27,9 @@ fun List<StockEntity>.asDomainModel(): List<AppStock> {
             price = it.price,
             percentchange = it.percentchange,
             absolutechange = it.absolutechange,
-            stockname = it.stockname
+            stockname = it.stockname,
+            postmarketpercentchange = it.postmarketchange,
+            postmarketabsolutechange = it.postmarketprice
         )
     }
 }

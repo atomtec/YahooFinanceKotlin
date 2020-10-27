@@ -26,7 +26,7 @@ interface StockDao {
     fun deleteAll() //TODO add delete by symbol
 }
 
-@Database(entities = [StockEntity::class], version = 1)
+@Database(entities = [StockEntity::class], version = 2)
 abstract class StockDataBase: RoomDatabase() {
     abstract val stockDao: StockDao
 }

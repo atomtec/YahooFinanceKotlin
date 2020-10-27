@@ -16,7 +16,7 @@ import com.squareup.moshi.JsonClass
  */
 @JsonClass(generateAdapter = true)
 data class ApiResponseContainer(
-    val quoteResonse : QuoteResponse
+    val quoteResponse : QuoteResponse
 )
 
 @JsonClass(generateAdapter = true)
@@ -29,8 +29,8 @@ data class QuoteResponse(
 data class Result(
     val regularMarketChange : Float,
     val regularMarketChangePercent : Float,
-    val postMarketPrice : Float,
-    val postMarketChange : Float,
+    val postMarketPrice : Float?, //This will not  be present during trading
+    val postMarketChange : Float?, //This will not be present during trading
     val regularMarketPrice :Float,
     val shortName : String,
     val symbol : String
@@ -43,8 +43,9 @@ fun List<Result>.asNetWorkModel(): List<NetWorkStock>{
             price = it.regularMarketPrice,
             percentchange = it.regularMarketChangePercent,
             absolutechange = it.regularMarketChange,
-            stockname = it.shortName
-
+            stockname = it.shortName,
+            postmarketprice = it.postMarketPrice?: Float.MIN_VALUE,
+            postmarketchange = it.postMarketChange?: Float.MIN_VALUE
         )
     }
 }

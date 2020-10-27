@@ -6,6 +6,7 @@ import com.f11labz.yahooapi.data.network.NetWorkStock
 import com.f11labz.yahooapi.data.network.RemoteDataContract
 import com.f11labz.yahooapi.data.repository.StockRepository
 import com.f11labz.yahooapi.stocklist.StockViewModel
+import com.squareup.moshi.JsonDataException
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
@@ -20,12 +21,13 @@ import java.util.*
 import kotlin.collections.HashMap
 
 private const val BASE_URL = "https://apidojo-yahoo-finance-v1.p.rapidapi.com"
-
+private const val API_HOST = "apidojo-yahoo-finance-v1.p.rapidapi.com"
+//Leaving it here for demo need to hide it.
 private const val API_KEY = "8db4edc1a4mshe03ec111dd29273p102f8cjsnaa461ee69aed"
 
 interface YahooFinanceService {
     @Headers(
-        "x-rapidapi-host: ${BASE_URL}",
+        "x-rapidapi-host: ${API_HOST}",
         "x-rapidapi-key: ${API_KEY}"
     )
     @GET("/market/v2/get-quotes")
@@ -44,7 +46,7 @@ object RemoteStockProviderAPI : RemoteDataContract {
         .baseUrl(BASE_URL)
         .addConverterFactory(MoshiConverterFactory.create())
         .client(httpClient.addInterceptor(
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY)).build())
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY)).build())//Remove from release
         .build()
 
     val quoteservice = retrofit.create(YahooFinanceService::class.java)
@@ -53,14 +55,26 @@ object RemoteStockProviderAPI : RemoteDataContract {
     @Throws(IOException::class)
     override suspend fun getStocksBySymbol(stockSymbols: List<String>): List<NetWorkStock> {
         val queryOptions : HashMap<String, String> = HashMap()
+        var fetchedStocks = listOf<NetWorkStock>()
         queryOptions.put("region","US")
-        val symbolString : StringBuilder = java.lang.StringBuilder()
-        stockSymbols.forEach {
-            symbolString.append(it)
-            symbolString.append(",")
+        if(stockSymbols.isNotEmpty()) {
+            val symbolString: StringBuilder = java.lang.StringBuilder()
+            stockSymbols.forEach {
+                symbolString.append(it)
+                symbolString.append(",")
+            }
+            queryOptions.put("symbols", symbolString.toString())
+            try {
+                val quotes: ApiResponseContainer = quoteservice.getQuotes(queryOptions)
+                fetchedStocks = quotes.quoteResponse.result.asNetWorkModel()
+            } catch (ex: JsonDataException) {
+                //As per the api if the always present fields are missing
+                //stock is invalid , the sometimes missing fields are
+                //taken care in data classes
+
+            }
         }
-        queryOptions.put("symbols",symbolString.toString())
-        val quotes : ApiResponseContainer = quoteservice.getQuotes(queryOptions)
-        return quotes.quoteResonse.result.asNetWorkModel()
+
+        return fetchedStocks
     }
 }

@@ -10,4 +10,5 @@
     <string name="fetch_error">Error while Fetching Stock Please try later</string>
     <string name="generic_error">Could not fetch data please try again !</string>
     <string name="enter_symbol_message">Please Enter A symbol</string>
+    <string name="post_market">Post :</string>
 </resources>

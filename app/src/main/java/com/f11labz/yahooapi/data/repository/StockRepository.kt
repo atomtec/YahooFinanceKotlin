@@ -14,6 +14,7 @@ import com.f11labz.yahooapi.data.sync.SyncManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import java.lang.Exception
 
 class StockRepository(private val database: StockDataBase){
 
@@ -39,10 +40,10 @@ class StockRepository(private val database: StockDataBase){
 
     suspend fun refreshStocks(){
         withContext(Dispatchers.IO){
-            //Timber.d("Refresh Stock is called")
+
             val dbStocks = database.stockDao.getAllStocksSuspend()
             try{
-                val remoteStock = RemoteStockProviderSDK.getStocksBySymbol(dbStocks.asListOfSymbols())
+                val remoteStock = RemoteStockProviderAPI.getStocksBySymbol(dbStocks.asListOfSymbols())
                 database.stockDao.insertAll(remoteStock.asDataBaseModel())
             }
             catch (Ex : IOException){
@@ -56,18 +57,21 @@ class StockRepository(private val database: StockDataBase){
         withContext(Dispatchers.IO){
             _status.postValue(SearchStockStatus.LOADING)
             try {
-                val stock = RemoteStockProviderSDK.getStocksBySymbol(listOf(symbol))
+                val stock = RemoteStockProviderAPI.getStocksBySymbol(listOf(symbol))
                 if(stock.size > 0){
                     _status.postValue(SearchStockStatus.DONE)
+                    database.stockDao.insertAll(stock.asDataBaseModel())
                 }
                 else{
                     _status.postValue(SearchStockStatus.NOTFOUND)
                 }
-                database.stockDao.insertAll(stock.asDataBaseModel())
+
             }
-            catch (Ex : IOException){
+            catch (Ex : Exception){
+                //TODO Catch and show and show appropriate message
                 _status.postValue(SearchStockStatus.ERROR)
             }
+
         }
 
     }

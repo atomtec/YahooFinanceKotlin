@@ -7,7 +7,9 @@ data class NetWorkStock(
     val price: Float ,
     val percentchange: Float ,
     val absolutechange: Float ,
-    val stockname: String
+    val stockname: String,
+    val postmarketprice : Float,
+    val postmarketchange : Float
 
 ) {}
 
@@ -22,7 +24,9 @@ fun List<NetWorkStock>.asDataBaseModel(): List<StockEntity> {
             price = it.price,
             percentchange = it.percentchange,
             absolutechange = it.absolutechange,
-            stockname = it.stockname
+            stockname = it.stockname ,
+            postmarketprice = it.postmarketprice,
+            postmarketchange = it.postmarketchange
         )
     }
 }

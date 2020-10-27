@@ -6,11 +6,13 @@ package com.f11labz.yahooapi.data.domain
  */
 
 data class AppStock(
-    val symbol: String? = null,
+    val symbol: String = "",
     val price: Float = 0f,
     val percentchange: Float = 0f,
     val absolutechange: Float = 0f,
-    val stockname: String? = null
+    val stockname: String = "",
+    val postmarketpercentchange : Float = 0f,
+    val postmarketabsolutechange : Float = 0f
 
 ) {}
 
