@@ -25,8 +25,8 @@ private constructor() {
     private val startTime = "09:30:00"
     private val stopTime = "16:30:00"
     private val formatter: SimpleDateFormat = SimpleDateFormat("HH:mm:ss")
-    private val date_from = formatter.parse(startTime)
-    private val date_to = formatter.parse(stopTime)
+    private val dateFrom = formatter.parse(startTime)
+    private val dateTo = formatter.parse(stopTime)
 
     //Unique fetchnow to avid processing dupliacte request
     fun fetchNow() {
@@ -55,7 +55,7 @@ private constructor() {
 
         val dateNow: Date? = formatter.parse(timeNow)
         Log.i(TAG,"NewYork Time Now is " + timeNow)//Doing for US add other regions later
-        val isTimeWithinRange = date_from.before(dateNow) && date_to.after(dateNow)
+        val isTimeWithinRange = dateFrom.before(dateNow) && dateTo.after(dateNow)
         val isWeekend = cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ||
                 cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
         Log.i(TAG,"Day of the week  " + cal.get(Calendar.DAY_OF_WEEK))
@@ -87,9 +87,7 @@ private constructor() {
 
     fun stopLiveSync() {
         Log.i(TAG, "LiveSync() Stop")
-        mLiveTimer?.let{
-            it.cancel()
-        }
+        mLiveTimer?.cancel()
         mLiveTimer = null
         WorkManager.getInstance().cancelAllWork()
     }
