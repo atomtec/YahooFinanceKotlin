@@ -8,8 +8,8 @@ data class NetWorkStock(
     val percentchange: Float ,
     val absolutechange: Float ,
     val stockname: String,
-    val postmarketprice : Float,
-    val postmarketchange : Float
+    val postmarketprice : Float = Float.MIN_VALUE, //When not available do not show
+    val postmarketchange : Float = Float.MIN_VALUE //When not available do not show
 
 ) {}
 

@@ -45,7 +45,7 @@ fun TextView.formatColor(appStock : AppStock,showPercentage: Boolean){
     else {
         visibility = View.VISIBLE
         val change = formatToNumber(appStock.postmarketabsolutechange)
-        val percentage = formatToPercentage(appStock.postmarketpercentchange)
+        val percentage = formatToPercentage(appStock.postmarketpercentchange/100)
         text = when (showPercentage) {
             true -> percentage
             else -> change

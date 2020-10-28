@@ -2,6 +2,7 @@ package com.f11labz.yahooapi.data.sync
 
 import android.util.Log
 import androidx.work.*
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -13,10 +14,19 @@ import java.util.concurrent.TimeUnit
 class SyncManager //Singleton
 private constructor() {
     private var mLiveTimer: Timer? = null
+
     private val networkContraints: Constraints
          get() = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
+
+    private val tz = TimeZone.getTimeZone("America/New_York")
+    private val cal = Calendar.getInstance(tz)
+    private val startTime = "09:30:00"
+    private val stopTime = "16:30:00"
+    private val formatter: SimpleDateFormat = SimpleDateFormat("HH:mm:ss")
+    private val date_from = formatter.parse(startTime)
+    private val date_to = formatter.parse(stopTime)
 
     //Unique fetchnow to avid processing dupliacte request
     fun fetchNow() {
@@ -38,7 +48,20 @@ private constructor() {
             )
     }
 
+    private fun hasMarketStarted(): Boolean{
+        val timeNow  = String.format("%02d" , cal.get(Calendar.HOUR_OF_DAY))+":"+
+        String.format("%02d" , cal.get(Calendar.MINUTE))+":"+
+                String.format("%02d" , cal.get(Calendar.SECOND))
 
+        val dateNow: Date? = formatter.parse(timeNow)
+        Log.i(TAG,"NewYork Time Now is " + timeNow)//Doing for US add other regions later
+        val isTimeWithinRange = date_from.before(dateNow) && date_to.after(dateNow)
+        val isWeekend = cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ||
+                cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+        Log.i(TAG,"Day of the week  " + cal.get(Calendar.DAY_OF_WEEK))
+        return isTimeWithinRange && !isWeekend
+
+    }
 
     /**
      * PeriodicWorkRequest have minimum time of 15 minutes
@@ -51,9 +74,15 @@ private constructor() {
         if (mLiveTimer == null) mLiveTimer = Timer()
         mLiveTimer?.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
-                fetchNow()
+                if(hasMarketStarted()){ //Sync Only when Market has started trading
+                   fetchNow()
+                }
+                else{
+                    Log.i(TAG,"Market has not started no sync required")
+                }
+
             }
-        }, 1000, SYNC_INTERVAL.toLong()) //every 15 seconds
+        }, 1000, SYNC_INTERVAL.toLong()) //every 15 seconds*/
     }
 
     fun stopLiveSync() {
@@ -69,6 +98,7 @@ private constructor() {
         private lateinit var INSTANCE: SyncManager
         private const val SYNC_INTERVAL = 15000
         private val TAG = SyncManager::class.java.simpleName
+
 
         @Synchronized
         fun getInstance(): SyncManager {
