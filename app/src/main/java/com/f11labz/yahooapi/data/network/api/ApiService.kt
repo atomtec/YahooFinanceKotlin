@@ -1,24 +1,17 @@
 package com.f11labz.yahooapi.data.network.api
 
-import androidx.lifecycle.ViewModelProvider
-import com.f11labz.yahooapi.data.database.getDatabase
+import com.f11labz.yahooapi.BuildConfig.DEBUG
 import com.f11labz.yahooapi.data.network.NetWorkStock
 import com.f11labz.yahooapi.data.network.RemoteDataContract
-import com.f11labz.yahooapi.data.repository.StockRepository
-import com.f11labz.yahooapi.stocklist.StockViewModel
 import com.squareup.moshi.JsonDataException
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import java.io.IOException
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.QueryMap
-import java.text.DecimalFormat
-import java.text.NumberFormat
-import java.util.*
-import kotlin.collections.HashMap
+import java.io.IOException
 
 private const val BASE_URL = "https://apidojo-yahoo-finance-v1.p.rapidapi.com"
 private const val API_HOST = "apidojo-yahoo-finance-v1.p.rapidapi.com"
@@ -37,7 +30,8 @@ interface YahooFinanceService {
 
 object RemoteStockProviderAPI : RemoteDataContract {
 
-    private val logging = HttpLoggingInterceptor()
+    private val logging = HttpLoggingInterceptor();
+
 
     private val httpClient =  OkHttpClient.Builder();
 
@@ -45,12 +39,20 @@ object RemoteStockProviderAPI : RemoteDataContract {
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(MoshiConverterFactory.create())
-        .client(httpClient.addInterceptor(
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY)).build())//Remove from release
+        .client(getLoggingClient())
         .build()
 
     val quoteservice = retrofit.create(YahooFinanceService::class.java)
 
+    private fun  getLoggingClient(): OkHttpClient {
+        if(DEBUG){
+            logging.level = HttpLoggingInterceptor.Level.BODY;
+        }
+        else{
+            logging.level = HttpLoggingInterceptor.Level.NONE;
+        }
+        return httpClient.addInterceptor(logging).build();
+    }
 
     @Throws(IOException::class)
     override suspend fun getStocksBySymbol(stockSymbols: List<String>): List<NetWorkStock> {

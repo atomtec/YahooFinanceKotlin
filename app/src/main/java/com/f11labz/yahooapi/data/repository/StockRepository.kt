@@ -46,7 +46,7 @@ class StockRepository(private val database: StockDataBase){
                 val remoteStock = RemoteStockProviderAPI.getStocksBySymbol(dbStocks.asListOfSymbols())
                 database.stockDao.insertAll(remoteStock.asDataBaseModel())
             }
-            catch (Ex : IOException){
+            catch (Ex : Exception){
                 //Just LOg as this will be background
             }
 
