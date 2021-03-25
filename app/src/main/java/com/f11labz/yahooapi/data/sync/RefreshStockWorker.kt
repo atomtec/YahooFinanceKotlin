@@ -10,8 +10,8 @@ class RefreshStockWorker(appContext: Context, params: WorkerParameters) :
     CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
-        val database = getDatabase(applicationContext)
-        val repository = StockRepository(database)
+        val dao = getDatabase(applicationContext).stockDao
+        val repository = StockRepository(dao)
         try {
             repository.refreshStocks()
         } catch (e: Exception) {

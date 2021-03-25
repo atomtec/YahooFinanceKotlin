@@ -26,7 +26,7 @@ class StockListFragment : Fragment() {
         val activity = requireNotNull(this.activity) {
             "You can only access the viewModel after onActivityCreated()"
         }
-        val repository = StockRepository(getDatabase(activity.application))
+        val repository = StockRepository(getDatabase(activity.application).stockDao)
         ViewModelProvider(this, StockViewModel.Factory(repository))
             .get(StockViewModel::class.java)
     }

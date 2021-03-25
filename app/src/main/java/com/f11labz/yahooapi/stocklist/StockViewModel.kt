@@ -3,6 +3,7 @@ package com.f11labz.yahooapi.stocklist
 import androidx.lifecycle.*
 import com.f11labz.yahooapi.data.domain.AppStock
 import com.f11labz.yahooapi.data.repository.StockRepository
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -25,7 +26,7 @@ class StockViewModel(private val repository: StockRepository) : ViewModel(),Life
     //Get DB Data
     private val _stocks = repository.appStock
     val stocks : LiveData<List<AppStock>>
-        get() = _stocks
+        get() = _stocks.asLiveData()
 
     init {
         refreshStock()

@@ -1,32 +1,27 @@
 package com.f11labz.yahooapi.data.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import com.f11labz.yahooapi.data.database.StockDataBase
-import com.f11labz.yahooapi.data.database.asDomainModel
-import com.f11labz.yahooapi.data.database.asListOfSymbols
+import androidx.lifecycle.*
+import com.f11labz.yahooapi.data.database.*
 import com.f11labz.yahooapi.data.network.asDataBaseModel
 import com.f11labz.yahooapi.data.network.sdk.RemoteStockProviderSDK
 import com.f11labz.yahooapi.data.domain.AppStock
 import com.f11labz.yahooapi.data.network.api.RemoteStockProviderAPI
 import com.f11labz.yahooapi.data.sync.SyncManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.lang.Exception
 
-class StockRepository(private val database: StockDataBase){
+class StockRepository(private val stockDao: StockDao){
 
     enum class SearchStockStatus { LOADING, ERROR, DONE , NOTFOUND}
 
-    private val dbStocks = database.stockDao.getAllStocks()
-    val appStock:LiveData<List<AppStock>> = Transformations
-        .map(dbStocks)
-    {
-       it.asDomainModel()
-    }
+    private val dbStocks : Flow <List<StockEntity>>
+        get() = stockDao.getAllStocks()
 
+
+    val appStock :Flow<List<AppStock>> = dbStocks.map { it.asDomainModel() }
     // The internal MutableLiveData that stores the status of the most recent request
     private val _status = MutableLiveData<SearchStockStatus>()
 
@@ -41,12 +36,12 @@ class StockRepository(private val database: StockDataBase){
     suspend fun refreshStocks(){
         withContext(Dispatchers.IO){
 
-            val dbStocks = database.stockDao.getAllStocksSuspend()
-            try{
-                val remoteStock = RemoteStockProviderAPI.getStocksBySymbol(dbStocks.asListOfSymbols())
-                database.stockDao.insertAll(remoteStock.asDataBaseModel())
-            }
-            catch (Ex : Exception){
+            val dbStocks = stockDao.getAllStocks().first()
+            try {
+                val remoteStock =
+                    RemoteStockProviderAPI.getStocksBySymbol(dbStocks.asListOfSymbols())
+                stockDao.insertAll(remoteStock.asDataBaseModel())
+            } catch (Ex: Exception) {
                 //Just LOg as this will be background
             }
 
@@ -60,7 +55,7 @@ class StockRepository(private val database: StockDataBase){
                 val stock = RemoteStockProviderAPI.getStocksBySymbol(listOf(symbol))
                 if(stock.size > 0){
                     _status.postValue(SearchStockStatus.DONE)
-                    database.stockDao.insertAll(stock.asDataBaseModel())
+                    stockDao.insertAll(stock.asDataBaseModel())
                 }
                 else{
                     _status.postValue(SearchStockStatus.NOTFOUND)

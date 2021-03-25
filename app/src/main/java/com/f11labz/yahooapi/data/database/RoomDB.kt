@@ -1,8 +1,8 @@
 package com.f11labz.yahooapi.data.database
 
 import android.content.Context
-import androidx.lifecycle.LiveData
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Keeping all DB related stuff in this file
@@ -11,7 +11,7 @@ import androidx.room.*
 interface StockDao {
 
     @Query("SELECT * from stock_table ORDER BY symbol ASC")
-    fun getAllStocks(): LiveData<List<StockEntity>>
+    fun getAllStocks(): Flow<List<StockEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll( stocks: List<StockEntity>)
