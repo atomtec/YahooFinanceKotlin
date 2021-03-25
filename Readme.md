@@ -14,7 +14,7 @@ When the app is launched and DB has stocks then it will immedately refresh it an
 for checking every 15 seconds .
 Once the app is the in the background syncing stops 
 
-##The branch is written Using Flow
+## The branch is written Using Flow
 
 
 
