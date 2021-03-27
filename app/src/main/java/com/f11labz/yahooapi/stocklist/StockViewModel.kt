@@ -11,7 +11,7 @@ class StockViewModel(private val repository: StockRepository) : ViewModel(),Life
 
 
 
-    val status: LiveData<StockRepository.SearchStockStatus> = repository.status
+    val status: LiveData<StockRepository.SearchStockStatus> = repository.status.asLiveData()
 
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
